@@ -1,0 +1,10 @@
+---
+
+- name: Ensure my envoirement
+  hosts: 
+    localhost
+  tasks:
+  - copy: 
+      src: "../adhoc/master.gitconfig" 
+      dest: "~/.gitconfig"
+
