@@ -1,10 +1,36 @@
 ---
-
-- name: Ensure my envoirement
-  hosts: 
-    localhost
+- name: Ensure Git installed
+  hosts: localhost
   tasks:
+  - package: name=git state=latest
+    when: ansible_os_family=="Debian"
+    become: yes
+ 
+  - name: Fisrt show no config
+    command: git config --global --list
+    ignore_errors: yes
+    register: git_config_before #how to register variables
+
+  - name: show git config output always - verbosity 0 is default for debug module
+    debug: var=git_config_before #how to use veriables
+ 
   - copy: 
       src: "../adhoc/master.gitconfig" 
       dest: "~/.gitconfig"
+
+  - name: Show newly added config
+    command: git config --global --list
+    ignore_errors: yes
+    register: git_config_after
+    
+  - name: Ensure to show git config after with debug - this time only show stdout_lines
+    debug: var=git_config_after.stdout_lines 
+
+- name: Other utils
+  hosts: localhost
+  tasks:
+  - apt: name=bat state=latest
+  - apt: 
+     name: jq 
+     state: latest
 
